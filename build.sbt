@@ -1,10 +1,11 @@
 lazy val root = (project in file(".")).
   settings(
-    name := "UnitsOfMeasurement",
-    version := "1.0",
-    scalaVersion := "2.13.1"
+    name := "VectorsAndExtensions",
+    version := "2021.0",
+    scalaVersion := "3.0.0-RC1"
   )
 
-libraryDependencies += "org.typelevel"  %% "squants"  % "1.6.0"
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.1"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % "test"
+libraryDependencies += "org.scalameta" %% "munit" % "0.7.22" % Test
+testFrameworks += new TestFramework("munit.Framework")
+
+libraryDependencies += ("org.typelevel"  %% "squants"  % "1.6.0").withDottyCompat(scalaVersion.value)
