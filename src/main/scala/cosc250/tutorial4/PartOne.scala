@@ -17,23 +17,45 @@ object PartOne extends App {
    * an ID to as part of the type signature.
    */
 
-  // This class is implicit, so where an IdStr[T] is required and we give it a plain string, it'll be promoted.
-  implicit class IdStr[T](val str:String)
+  case class IdStr[T](id:String)
+
+  // Import implicit conversions if we want to do this promotion without a warning
+  import scala.language.implicitConversions
+
+  given id[T]:Conversion[String, IdStr[T]] with
+    def apply(s:String) = IdStr[T](s)
 
   case class User(id:IdStr[User], name:String)
   case class Course(id:IdStr[Course], name:String)
 
-  // We can create users and courses as normal
-  val fred = User("123", "Fred")
+  @main def implicitMain = {
+    // We can create users and courses as normal
+    val fred = User("123", "Fred")
+    println(fred)
 
-  // But see if you can accidentally assign a User ID to a course... (uncomment this and it shouldn't compile)
-  // val course = Course(fred.id, "My course")
+    // But see if you can accidentally assign a User ID to a course... (uncomment this and it shouldn't compile)
+    //val course = Course(fred.id, "My course")
+    //println(course)
+  }
 
+  // However, implicit conversions are seen as problematic because it's hard for a programmer to see where the conversion occurred
+  // Instead, it might be better to define .asId as an extension method
+  extension (s:String) def asId[T] = IdStr[T](s)
+
+  @main def extensionIdMain = {
+    // Though we're still inferring the type T, the place where the string becomes an Id is explicit in this version
+    val fred = User("123".asId, "Fred")
+    println(fred)
+
+    // But see if you can accidentally assign a User ID to a course... (uncomment this and it shouldn't compile)
+    //val course = Course(fred.id, "My course")
+    //println(course)
+  }
 
 
 
   /**
-    * An implicit class is a convenient way of wrapping some extension methods.
+    * Let's wrap some extension methods.
     *
     * The example below is a contrived example as it's not something we'd really want to do. But it lets us demo
     * the principle on a simple example.
@@ -44,7 +66,7 @@ object PartOne extends App {
     * That the class extends AnyVal means that in the compiled code, the class will never have memory allocated to it -
     * is a "value class", that exists only to hold the extra methods we're adding to strings while it is in scope.
     */
-  implicit class BinaryString(val str:String) extends AnyVal {
+  extension (str:String) {
 
     /**
       * This lets us say, for instance
@@ -107,11 +129,12 @@ object PartOne extends App {
 
   // Now that these extension methods are in scope, try a few of these binary operations
 
-  // println("1101".parseBinary)
-
-  // println(~"10101010101010")
-
-  // println("111" >> 2)
+  @main def binaryStringMain = {
+    println("You need to uncomment the commands...")
+    // println("1101".parseBinary)
+    // println(~"10101010101010")
+    // println("111" >> 2)
+  }
 
 
   /*
@@ -132,7 +155,7 @@ object PartOne extends App {
    *
    * So to do this, we're going to define some extension methods to put onto tuples of Doubles
    */
-  implicit class VecOps(val vec:Vec2D) extends AnyVal {
+  extension (vec:Vec2D) {
 
     def +(other:Vec2D):Vec2D = ???
 
@@ -154,7 +177,10 @@ object PartOne extends App {
    * defined below...
    */
 
-  //println( ((1.0, 2.0) * 5) + (4.2, 3.7) )
+  @main def vectorMain = {
+    println("You need to uncomment the examples, and then should play around with writing your own")
+    //println( ((1.0, 2.0) * 5) + (4.2, 3.7) )
+  }
 
 
 
